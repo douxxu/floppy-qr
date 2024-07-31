@@ -2,9 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { PNG } = require('pngjs');
 const jsQR = require('jsqr');
-require('colors'); 
-
-//sorry for the OwO
+require('colors');
 
 const log = (message, type = 'info') => {
     const typeMap = {
@@ -15,7 +13,7 @@ const log = (message, type = 'info') => {
     console.log(`${typeMap[type]} ${message.grey}`);
 };
 
-async function loadQRCodesOwO(directory, noCmd) {
+async function loadQRCodesOwO(directory) {
     try {
         log(`Loading QR codes from directory: ${directory}`, 'info');
         const qrFiles = fs.readdirSync(directory).filter(file => file.endsWith('.png'));
@@ -25,6 +23,7 @@ async function loadQRCodesOwO(directory, noCmd) {
             log('No QR codes found in the specified directory.', 'error');
             throw new Error('No QR codes found in the specified directory.');
         }
+
 
         const firstQRPath = path.join(directory, qrFiles[0]);
         const { content: firstQRContent } = await readQRCodeOwO(firstQRPath);
@@ -37,20 +36,20 @@ async function loadQRCodesOwO(directory, noCmd) {
             throw new Error('Invalid JSON format in metadata.');
         }
 
-        const { fileName, note, totalChunks } = metadata;
+        const { fileName, note, totalChunks, useBase64 } = metadata;
         if (!fileName || totalChunks === undefined) {
             log('Metadata is missing required fields.', 'error');
             throw new Error('Metadata is missing required fields.');
         }
 
-        let fileBase64 = '';
+        let fileContent = '';
         const foundChunks = new Set();
 
         for (let i = 1; i < qrFiles.length; i++) {
             const file = qrFiles[i];
             const qrPath = path.join(directory, file);
             const { content: qrContent } = await readQRCodeOwO(qrPath);
-            fileBase64 += qrContent;
+            fileContent += qrContent;
             foundChunks.add(i);
         }
 
@@ -59,7 +58,7 @@ async function loadQRCodesOwO(directory, noCmd) {
             throw new Error('Some QR codes are missing. Aborting reconstruction.');
         }
 
-        const fileBuffer = Buffer.from(fileBase64, 'base64');
+        const fileBuffer = Buffer.from(fileContent, useBase64 ? 'base64' : 'utf-8');
         const outputFilePath = path.resolve(process.cwd(), fileName);
         fs.writeFileSync(outputFilePath, fileBuffer);
         log(`File successfully reconstructed as ${outputFilePath}`, 'success');
@@ -67,7 +66,6 @@ async function loadQRCodesOwO(directory, noCmd) {
         if (note) {
             console.log('[i]'.blue, `${note}`.cyan);
         }
-
 
     } catch (err) {
         log('Error loading QR codes: ' + err.message, 'error');

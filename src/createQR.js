@@ -3,7 +3,7 @@ const path = require('path');
 const QRCode = require('qrcode');
 require('colors');
 
-const CHUNK_SIZE = 1650; // Size of each chunk for QR codes in base64
+const CHUNK_SIZE = 1650;
 
 const log = (message, type = 'info') => {
     const typeMap = {
@@ -14,13 +14,17 @@ const log = (message, type = 'info') => {
     console.log(`${typeMap[type]} ${message.grey}`);
 };
 
-async function generateQRCodes(filePath, note) {
+async function generateQRCodes(filePath, note, useBase64) {
     try {
         log(`Starting QR code generation for file: ${filePath}`, 'info');
         const fileContent = fs.readFileSync(filePath);
-        const fileBase64 = fileContent.toString('base64');
+        const fileBase64 = useBase64 ? fileContent.toString('base64') : fileContent.toString('utf-8');
         const fileName = path.basename(filePath);
         const qrFolder = `${fileName}-qr`;
+
+        if (useBase64) {
+          log('-b | --base64 specified. Using base64 encryption.', 'info')
+        }
 
         if (!fs.existsSync(qrFolder)) {
             fs.mkdirSync(qrFolder);
@@ -29,10 +33,12 @@ async function generateQRCodes(filePath, note) {
         const totalChunks = Math.ceil(fileBase64.length / CHUNK_SIZE);
         let chunkIndex = 0;
 
+
         const info = {
             fileName,
             note: note || null,
-            totalChunks
+            totalChunks,
+            useBase64
         };
         const infoQR = JSON.stringify(info);
         const infoQRPath = path.join(qrFolder, `qr-1.png`);
