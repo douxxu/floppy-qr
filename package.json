@@ -1,6 +1,6 @@
 {
   "name": "floppy-qr",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Floppy QR - Store files in QR codes",
   "main": "floppy-qr.js",
   "bin": {

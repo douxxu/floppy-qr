@@ -5,7 +5,7 @@ Welcome to **Floppy QR**! This project provides a way to store and retrieve file
 ## Features
 
 - **Create QR Codes**: Split a file into chunks, encode each chunk into a QR code, and store them in a directory.
-- **Load QR Codes**: Reconstruct the original file from a series of QR codes.
+- **Load QR Codes**: Reconstruct the original file from a series of QR codes. The format (base64 or text) is automatically detected based on metadata.
 - **Retro Charm**: Designed with a nostalgic nod to the floppy disk era.
 
 ## Installation
@@ -15,7 +15,7 @@ Clone the repository and install the necessary dependencies using npm:
 ```sh
 sudo npm install -g floppy-qr
 ```
-*note: don't forget the "-g"*
+*Note: Don't forget the "-g"*
 
 ## Usage
 
@@ -24,23 +24,24 @@ sudo npm install -g floppy-qr
 To generate QR codes from a file, use the `create` command. This will create QR codes for each chunk of the file.
 
 ```sh
-floppy-qr create <file-path> [-n, --note <optional-note>]
+floppy-qr create <file-path> [-n, --note <optional-note>] [-b, --base64]
 ```
 
 - **`<file-path>`**: Path to the file you want to encode into QR codes.
 - **`--note`**: Optional note to include in the metadata QR code.
+- **`--base64`**: Optional flag to encode the file chunks in base64 format.
 
 **Example:**
 
 ```sh
-floppy-qr create myfile.txt --note "This is a test file."
+floppy-qr create myfile.txt --note "This is a test file." --base64
 ```
 
 This command will generate QR codes in a directory named `myfile.txt-qr`, with the metadata and file chunks encoded into individual QR codes.
 
 ### Load QR Codes
 
-To reconstruct a file from a series of QR codes, use the `load` command. This will read the QR codes from the specified directory and reassemble the file.
+To reconstruct a file from a series of QR codes, use the `load` command. This will read the QR codes from the specified directory and reassemble the file. The format (base64 or text) is detected automatically based on the metadata in the first QR code.
 
 ```sh
 floppy-qr load <directory>
