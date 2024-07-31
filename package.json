@@ -1,0 +1,34 @@
+{
+  "name": "floppy-qr",
+  "version": "1.0.1",
+  "description": "Floppy QR - Store files in QR codes",
+  "main": "floppy-qr.js",
+  "bin": {
+    "floppy-qr": "./src/floppy-qr.js"
+  },
+  "keywords": [
+    "qr",
+    "code",
+    "generator",
+    "loader",
+    "file",
+    "base64"
+  ],
+  "repository": {
+      "type": "git",
+      "url": "git+https://github.com/douxxu/floppy-qr.git"
+  },
+  "bugs": {
+      "url": "https://github.com/douxxu/floppy-qr/issues"
+  },
+  "homepage": "https://github.com/douxxu/floppy-qr",
+  "author": "douxx",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "*",
+    "fs-extra": "*",
+    "pngjs": "*",
+    "qrcode": "*",
+    "jsqr": "*"
+  }
+}
