@@ -6,6 +6,7 @@ Welcome to **Floppy QR**! This project provides a way to store and retrieve file
 
 - **Create QR Codes**: Split a file into chunks, encode each chunk into a QR code, and store them in a directory.
 - **Load QR Codes**: Reconstruct the original file from a series of QR codes. The format (base64 or text) is automatically detected based on metadata.
+- **Customizable Options**: Adjust chunk size and error correction level for QR codes.
 - **Retro Charm**: Designed with a nostalgic nod to the floppy disk era.
 
 ## Installation
@@ -24,20 +25,22 @@ sudo npm install -g floppy-qr
 To generate QR codes from a file, use the `create` command. This will create QR codes for each chunk of the file.
 
 ```sh
-floppy-qr create <file-path> [-n, --note <optional-note>] [-b, --base64]
+floppy-qr create <file-path> [-n, --note <optional-note>] [-b, --base64] [-s, --size <chunk-size>] [-c, --correction <level>]
 ```
 
 - **`<file-path>`**: Path to the file you want to encode into QR codes.
 - **`--note`**: Optional note to include in the metadata QR code.
 - **`--base64`**: Optional flag to encode the file chunks in base64 format.
+- **`--size`**: Optional parameter to specify the size of each chunk. Default is `1650` bytes.
+- **`--correction`**: Optional parameter to set the error correction level. Options are `L`, `M`, `Q`, `H`. Default is `Q`.
 
 **Example:**
 
 ```sh
-floppy-qr create myfile.txt --note "This is a test file." --base64
+floppy-qr create myfile.txt --note "This is a test file." --base64 --size 2000 --correction H
 ```
 
-This command will generate QR codes in a directory named `myfile.txt-qr`, with the metadata and file chunks encoded into individual QR codes.
+This command will generate QR codes in a directory named `myfile.txt-qr`, with the metadata and file chunks encoded into individual QR codes. It uses base64 encoding, chunks of 2000 bytes, and a high error correction level (`H`).
 
 ### Load QR Codes
 
@@ -61,7 +64,7 @@ This command will read QR codes from the `myfile.txt-qr` directory and reconstru
 
 - **`createQR.js`**: Contains functionality to create QR codes from a file.
 - **`loadQR.js`**: Contains functionality to load and reconstruct a file from QR codes.
-- **`index.js`**: Main script for handling command-line interface.
+- **`floppy-qr.js`**: Main script for handling command-line interface.
 
 ## Dependencies
 
