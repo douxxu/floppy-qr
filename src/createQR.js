@@ -4,8 +4,8 @@ const QRCode = require('qrcode');
 const crypto = require('crypto');
 require('colors');
 
-const CHUNK_SIZE = 1650;
-const ERROR_CORRECTION_LEVEL = 'L';
+const DEFAULT_CHUNK_SIZE = 1650;
+const DEFAULT_ERROR_CORRECTION_LEVEL = 'Q';
 
 const log = (message, type = 'info') => {
     const typeMap = {
@@ -22,25 +22,28 @@ const createQrDirectory = (directory) => {
     }
 };
 
-const createMetadataQR = async (qrFolder, info) => {
+const createMetadataQR = async (qrFolder, info, errorCorrectionLevel) => {
     const infoQR = JSON.stringify(info);
     const infoQRPath = path.join(qrFolder, 'qr-1.png');
-    await QRCode.toFile(infoQRPath, infoQR, { errorCorrectionLevel: ERROR_CORRECTION_LEVEL });
+    await QRCode.toFile(infoQRPath, infoQR, { errorCorrectionLevel });
     log(`Metadata QR code created at ${infoQRPath}`, 'success');
 };
 
-const createChunkQR = async (qrFolder, chunk, chunkIndex) => {
+const createChunkQR = async (qrFolder, chunk, chunkIndex, errorCorrectionLevel) => {
     const chunkData = { index: chunkIndex, data: chunk };
     const chunkHash = crypto.createHash('sha256').update(chunk).digest('hex');
     const chunkContent = JSON.stringify({ chunkData, chunkHash });
     const qrPath = path.join(qrFolder, `qr-${chunkIndex}.png`);
-    await QRCode.toFile(qrPath, chunkContent, { errorCorrectionLevel: ERROR_CORRECTION_LEVEL });
+    await QRCode.toFile(qrPath, chunkContent, { errorCorrectionLevel });
     log(`QR code for chunk ${chunkIndex} created at ${qrPath}`, 'success');
 };
 
-async function generateQRCodes(filePath, note, useBase64) {
+async function generateQRCodes(filePath, note, useBase64 = false, chunkSize = DEFAULT_CHUNK_SIZE, errorCorrectionLevel = DEFAULT_ERROR_CORRECTION_LEVEL) {
     try {
         log(`Starting QR code generation for file: ${filePath}`, 'info');
+        log(`Chunk size set to ${chunkSize}`, 'info');
+        log(`Error correction level: ${errorCorrectionLevel}`, 'info');
+        
         const fileContent = fs.readFileSync(filePath);
         const fileBase64 = useBase64 ? fileContent.toString('base64') : fileContent.toString('utf-8');
         const fileName = path.basename(filePath);
@@ -49,13 +52,13 @@ async function generateQRCodes(filePath, note, useBase64) {
         log(`Using base64: ${useBase64}`, 'info');
         createQrDirectory(qrFolder);
 
-        const totalChunks = Math.ceil(fileBase64.length / CHUNK_SIZE);
-        const info = { fileName, note, totalChunks, useBase64 };
-        await createMetadataQR(qrFolder, info);
+        const totalChunks = Math.ceil(fileBase64.length / chunkSize);
+        const info = { fileName, note, totalChunks, useBase64, chunkSize, errorCorrectionLevel };
+        await createMetadataQR(qrFolder, info, errorCorrectionLevel);
 
         for (let i = 0; i < totalChunks; i++) {
-            const chunk = fileBase64.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
-            await createChunkQR(qrFolder, chunk, i + 2); // Metadata QR is at index 1
+            const chunk = fileBase64.slice(i * chunkSize, (i + 1) * chunkSize);
+            await createChunkQR(qrFolder, chunk, i + 2, errorCorrectionLevel);
         }
 
         log(`All QR codes created successfully in ${qrFolder}.`, 'success');

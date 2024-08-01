@@ -13,16 +13,20 @@ const { loadQRCodesOwO } = require('./loadQR');
 const program = new commander.Command();
 
 program
-  .version('1.2.1')
+  .version('1.1.0')
   .description('Floppy QR - Store files in QR codes');
 
 program
   .command('create <file>')
   .option('-n, --note <note>', 'Command to execute after rebuilding the file')
   .option('-b, --base64', 'Use base64 encoding for QR codes')
+  .option('-s, --size <size>', 'Set the size of each chunk', parseInt)
+  .option('-c, --correction <level>', 'Set the error correction level (L, M, Q, H)')
   .description('Create QR codes from a file')
   .action((file, options) => {
-    generateQRCodes(file, options.note, options.base64);
+    const chunkSize = options.size || 1650;
+    const errorCorrectionLevel = options.correction || 'Q';
+    generateQRCodes(file, options.note, options.base64, chunkSize, errorCorrectionLevel);
   });
 
 program

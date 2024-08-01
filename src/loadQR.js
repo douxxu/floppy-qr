@@ -38,7 +38,7 @@ async function loadQRCodesOwO(directory, useBase64) {
     try {
         log(`Loading QR codes from directory: ${directory}`, 'info');
         const qrFiles = fs.readdirSync(directory).filter(file => file.endsWith('.png'));
-        qrFiles.sort((a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0])); // Trier par index
+        qrFiles.sort((a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0])); 
 
         if (qrFiles.length === 0) {
             log('No QR codes found in the specified directory.', 'error');
