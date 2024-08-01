@@ -45,11 +45,10 @@ async function loadQRCodesOwO(directory, useBase64) {
             throw new Error('No QR codes found in the specified directory.');
         }
 
-        // Lire les métadonnées
         const firstQRPath = path.join(directory, qrFiles[0]);
         const { content: firstQRContent } = await readQRCodeOwO(firstQRPath);
         const metadata = JSON.parse(firstQRContent);
-        const { fileName, totalChunks, useBase64 } = metadata;
+        const { fileName, totalChunks, useBase64, note } = metadata;
 
         if (!fileName || totalChunks === undefined) {
             log('Metadata is missing required fields.', 'error');
@@ -91,6 +90,10 @@ async function loadQRCodesOwO(directory, useBase64) {
         const outputFilePath = path.resolve(process.cwd(), fileName);
         fs.writeFileSync(outputFilePath, fileBuffer);
         log(`File successfully reconstructed as ${outputFilePath}`, 'success');
+
+        if (note) {
+            console.log('[i]'.blue, `${note}`.cyan);
+        }
     } catch (err) {
         log('Error loading QR codes: ' + err.message, 'error');
     }
