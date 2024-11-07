@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-//Consider checking the github project\\
-//https://github.com/douxxu/floppy-qr \\
-//The code was really shitty, so i    \\
-//asked chat-gpt to redo it optimizing\\
-//it, so sorry if it feels a lot like \\
-//ia :(                               \\
+/*Consider checking the github project
+https://github.com/douxxu/floppy-qr
+The code was really shitty, so i
+asked chat-gpt to redo it optimizing
+it, so sorry if it feels a lot like 
+ia :(                               */
 
 const commander = require('commander');
 const { generateQRCodes } = require('./createQR');
@@ -31,7 +31,6 @@ program
 
 program
   .command('load <directory>')
-  .option('-b, --base64', 'Expect base64 encoding in QR codes')
   .description('Load QR codes to reconstruct the file')
   .action((directory, options) => {
     loadQRCodesOwO(directory, options.base64);

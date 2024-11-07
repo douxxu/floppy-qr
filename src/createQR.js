@@ -4,8 +4,8 @@ const QRCode = require('qrcode');
 const crypto = require('crypto');
 require('colors');
 
-const DEFAULT_CHUNK_SIZE = 1650;
-const DEFAULT_ERROR_CORRECTION_LEVEL = 'Q';
+const DEFAULT_CHUNK_SIZE = 1250;
+const DEFAULT_ERROR_CORRECTION_LEVEL = 'L';
 
 const log = (message, type = 'info') => {
     const typeMap = {
