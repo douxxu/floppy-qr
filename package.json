@@ -29,6 +29,7 @@
     "fs-extra": "*",
     "jsqr": "*",
     "pngjs": "*",
-    "qrcode": "*"
+    "qrcode": "*",
+    "commander": "*"
   }
 }
